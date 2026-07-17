@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fiddler — Device Setup for Users</title>
+<style>
+:root { color-scheme: light; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #FFF7F0;
+  color: #2b2b3a;
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+/* ── HERO ── */
+.hero {
+  background: linear-gradient(120deg, #FF6B6B 0%, #FF8E53 45%, #FFB347 100%);
+  padding: 30px 24px 26px;
+  text-align: center;
+  position: relative; overflow: hidden;
+}
+.hero::after {
+  content:''; position:absolute; bottom:-40px; left:0; right:0; height:80px;
+  background: #FFF7F0; border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+}
+.hero h1 { color:#fff; font-size: 26px; font-weight: 900; margin-bottom: 6px; text-shadow: 0 2px 6px rgba(0,0,0,0.15); }
+.hero p { color: #fff; font-size: 14px; opacity: 0.95; }
+.hero .emoji { font-size: 40px; margin-bottom: 8px; display:block; }
+
+/* ── TABS ── */
+.tabs {
+  display: flex; justify-content: center; gap: 8px;
+  padding: 4px 12px 0; flex-wrap: wrap;
+  position: relative; z-index: 2; margin-top: -6px;
+}
+.tab {
+  background: #fff; border: 2px solid #FFE0CC;
+  border-radius: 14px; padding: 10px 16px;
+  font-size: 13px; font-weight: 800; color: #FF8E53;
+  cursor: pointer; transition: all .18s;
+  display:flex; align-items:center; gap:7px;
+  box-shadow: 0 3px 10px rgba(255,142,83,0.12);
+}
+.tab:hover { transform: translateY(-2px); }
+.tab.active { background: linear-gradient(120deg,#FF6B6B,#FF8E53); color:#fff; border-color: transparent; }
+.tab .ico { font-size: 17px; }
+
+/* ── CONTAINER ── */
+.wrap { max-width: 640px; margin: 0 auto; padding: 22px 16px 50px; }
+
+/* ── INTRO CARD ── */
+.intro {
+  background: #fff; border-radius: 18px; padding: 18px 20px;
+  box-shadow: 0 4px 18px rgba(255,107,107,0.10);
+  margin-bottom: 22px; border: 2px solid #FFE8DC;
+}
+.intro h2 { font-size: 15px; font-weight: 900; color:#FF6B6B; margin-bottom:6px; display:flex; align-items:center; gap:6px; }
+.intro p { font-size: 13.5px; color: #555; }
+
+/* provided-address banner */
+.addr {
+  background: linear-gradient(120deg,#4ECDC4,#2BB3AB); border-radius:16px;
+  padding:14px 18px; margin-bottom:22px; color:#fff;
+  box-shadow:0 4px 14px rgba(43,179,171,.28);
+}
+.addr .lbl { font-size:11px; font-weight:800; letter-spacing:.6px; text-transform:uppercase; opacity:.9; }
+.addr .row { display:flex; gap:22px; margin-top:6px; }
+.addr .row div span { display:block; font-size:11px; opacity:.85; }
+.addr .row div b { font-size:18px; font-family:monospace; }
+.addr .hint { font-size:11.5px; opacity:.92; margin-top:8px; }
+
+/* ── PANEL ── */
+.panel { display: none; }
+.panel.active { display: block; animation: fade .35s ease; }
+@keyframes fade { from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
+
+/* ── STEP ── */
+.step {
+  background: #fff; border-radius: 18px;
+  margin-bottom: 16px; overflow: hidden;
+  box-shadow: 0 3px 14px rgba(0,0,0,0.05);
+  border: 2px solid #F3F0FF;
+}
+.step-top {
+  display: flex; align-items: center; gap: 14px;
+  padding: 16px 18px 14px;
+}
+.bignum {
+  width: 46px; height: 46px; border-radius: 14px;
+  display:flex; align-items:center; justify-content:center;
+  font-size: 22px; font-weight: 900; color:#fff; flex-shrink:0;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+}
+.c1 { background: linear-gradient(135deg,#5B8DEF,#3E6FD0); }
+.c2 { background: linear-gradient(135deg,#A66CFF,#8347E5); }
+.c3 { background: linear-gradient(135deg,#FF6B9D,#E84A7F); }
+.c4 { background: linear-gradient(135deg,#FFB443,#F59021); }
+.cx { background: linear-gradient(135deg,#4ECDC4,#2BB3AB); }
+.step-h { font-size: 16px; font-weight: 800; color:#2b2b3a; }
+.step-sub { font-size: 11.5px; color:#9aa0b0; font-weight:600; text-transform:uppercase; letter-spacing:.5px; }
+
+.step-b { padding: 0 18px 18px; }
+.step-b p { font-size: 13.5px; color:#444; margin-bottom: 10px; }
+.step-b strong { color:#2b2b3a; }
+
+/* ── TAP PATH (colored pills) ── */
+.taps { display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin: 12px 0; }
+.tap {
+  background:#F3F0FF; color:#6D3EE8; font-size:12.5px; font-weight:700;
+  padding:6px 12px; border-radius:20px;
+}
+.taps .arw { color:#c9c9d6; font-weight:900; font-size:14px; }
+.tap.hot { background:#FFE8DC; color:#FF6B4A; }
+
+/* ── PHONE BROWSER MOCK ── */
+.browser { border:2px solid #E5E1F5; border-radius:14px; overflow:hidden; margin:12px 0; }
+.browser-bar { background:#F3F0FF; padding:9px 12px; display:flex; align-items:center; gap:8px; font-size:12px; color:#6D3EE8; font-weight:700; }
+.browser-bar .lock { font-size:12px; }
+.browser-url { flex:1; background:#fff; border-radius:20px; padding:5px 12px; font-family:monospace; font-size:12px; color:#3E6FD0; font-weight:700; }
+.browser-body { padding:16px; text-align:center; background:#fff; }
+.browser-body .dl { display:inline-flex; align-items:center; gap:8px; background:linear-gradient(135deg,#4ECDC4,#2BB3AB); color:#fff; padding:9px 18px; border-radius:12px; font-size:13px; font-weight:800; box-shadow:0 3px 8px rgba(78,205,196,.35); }
+.browser-body .cap { font-size:11px; color:#9aa0b0; margin-top:8px; }
+
+/* ── VALUE BOX ── */
+.vals { background:#2b2b3a; border-radius:14px; padding:14px 16px; margin:12px 0; }
+.vrow { display:flex; justify-content:space-between; align-items:center; padding:5px 0; }
+.vkey { color:#9aa0b0; font-size:12.5px; font-weight:600; }
+.vval { color:#4ECDC4; font-family:monospace; font-size:14px; font-weight:800; }
+
+/* ── CALLOUTS ── */
+.tip { display:flex; gap:11px; align-items:flex-start; border-radius:14px; padding:12px 14px; margin:12px 0; font-size:13px; line-height:1.55; }
+.tip .i { font-size:19px; flex-shrink:0; }
+.tip-easy { background:#E7FBF9; border:2px solid #B4EFEA; color:#0d6d64; }
+.tip-warn { background:#FFF6E0; border:2px solid #FFE08A; color:#8a5a00; }
+.tip-note { background:#EEF3FF; border:2px solid #C9DAFF; color:#2c4b9b; }
+
+/* ── OPTIONAL fold ── */
+.optbox { border:2px dashed #DDCBFF; border-radius:14px; margin:12px 0; overflow:hidden; }
+.opthead { background:#F6F0FF; padding:11px 14px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; font-size:13px; font-weight:800; color:#6D3EE8; user-select:none; }
+.optbody { padding:0 14px; max-height:0; overflow:hidden; transition:all .3s ease; font-size:13px; color:#555; }
+.optbody.open { max-height:400px; padding:14px; }
+
+/* ── ARCH ── */
+.arch { background:#2b2b3a; border-radius:18px; padding:24px 16px; text-align:center; }
+.anode { display:inline-block; background:rgba(255,255,255,.08); border:2px solid rgba(255,255,255,.14); border-radius:14px; padding:11px 20px; color:#fff; font-size:13.5px; font-weight:700; }
+.anode.teal { border-color:rgba(78,205,196,.6); color:#4ECDC4; }
+.anode.orange { border-color:rgba(255,142,83,.6); color:#FFB347; }
+.aline { width:3px; height:26px; margin:6px auto 2px; border-radius:3px; background:linear-gradient(#4ECDC4,#FF8E53); }
+.alabel { font-size:11px; color:#9aa0b0; font-style:italic; margin-bottom:4px; }
+
+/* ── PROGRESS DOTS ── */
+.dots { display:flex; justify-content:center; gap:8px; margin:4px 0 18px; }
+.dot { width:9px; height:9px; border-radius:50%; background:#FFE0CC; transition:all .2s; }
+.dot.on { background:#FF8E53; width:26px; border-radius:6px; }
+
+/* ── NAV ── */
+.nav { display:flex; gap:10px; margin-top:18px; }
+.nbtn { flex:1; padding:13px; border:none; border-radius:14px; font-size:14px; font-weight:800; cursor:pointer; transition:all .18s; }
+.nprev { background:#F3F0FF; color:#8347E5; }
+.nnext { background:linear-gradient(120deg,#FF6B6B,#FF8E53); color:#fff; box-shadow:0 4px 12px rgba(255,107,107,.35); }
+.nnext:hover { transform:translateY(-2px); }
+.nbtn:disabled { opacity:.35; cursor:default; transform:none!important; }
+
+/* ── PHONE SCREENSHOT MOCK ── */
+.shot { display:flex; justify-content:center; margin:14px 0; }
+.phone { width:220px; border:6px solid #2b2b3a; border-radius:26px; overflow:hidden; background:#fff; box-shadow:0 8px 22px rgba(0,0,0,.18); }
+.phone .statusbar { background:#2b2b3a; height:20px; display:flex; align-items:center; justify-content:center; }
+.phone .statusbar .notch { width:60px; height:6px; background:#000; border-radius:6px; }
+.shotcap { text-align:center; font-size:11px; color:#9aa0b0; margin-top:6px; font-weight:600; }
+
+/* ── FAQ ── */
+.faq { margin-top:12px; }
+.faq-item { background:#fff; border:2px solid #F3F0FF; border-radius:14px; margin-bottom:10px; overflow:hidden; }
+.faq-q { padding:14px 16px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:10px; font-size:13.5px; font-weight:800; color:#2b2b3a; user-select:none; }
+.faq-q:hover { background:#FBFAFF; }
+.faq-q .qmark { flex-shrink:0; width:24px; height:24px; border-radius:8px; background:#F3F0FF; color:#8347E5; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:14px; }
+.faq-q .chev { color:#c9c9d6; font-weight:900; transition:transform .25s; }
+.faq-item.open .faq-q .chev { transform:rotate(180deg); }
+.faq-a { max-height:0; overflow:hidden; transition:max-height .3s ease, padding .3s ease; padding:0 16px; font-size:13px; color:#555; line-height:1.6; }
+.faq-item.open .faq-a { max-height:300px; padding:0 16px 16px 52px; }
+
+/* ── DONE ── */
+.done { text-align:center; background:#fff; border-radius:18px; padding:34px 22px; box-shadow:0 3px 14px rgba(0,0,0,.06); display:none; border:2px solid #FFE8DC; }
+.done.on { display:block; animation:fade .4s ease; }
+.done .big { font-size:54px; margin-bottom:12px; }
+.done h2 { font-size:20px; font-weight:900; color:#FF6B6B; margin-bottom:8px; }
+.done p { font-size:13.5px; color:#666; }
+.done button { margin-top:18px; padding:11px 26px; border:none; border-radius:12px; background:linear-gradient(120deg,#FF6B6B,#FF8E53); color:#fff; font-weight:800; cursor:pointer; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <span class="emoji">📱</span>
+  <h1>Set Up Your Device</h1>
+  <p>Follow these steps on your phone — takes 2 minutes</p>
+</div>
+
+<div class="tabs">
+  <div class="tab active" id="t-android" onclick="showTab('android')"><span class="ico">🤖</span>Android</div>
+  <div class="tab" id="t-ios" onclick="showTab('ios')"><span class="ico">🍎</span>iPhone / iPad</div>
+  <div class="tab" id="t-arch" onclick="showTab('arch')"><span class="ico">❓</span>Help</div>
+</div>
+
+<div class="wrap">
+
+  <!-- shared address banner -->
+  <div class="addr">
+    <div class="lbl">📌 Use the address your team gave you</div>
+    <div class="row">
+      <div><span>Proxy / Server</span><b>192.168.8.102</b></div>
+      <div><span>Port</span><b>8866</b></div>
+    </div>
+    <div class="hint">These are examples — enter the exact numbers you were given.</div>
+  </div>
+
+  <!-- ═══════════ ANDROID ═══════════ -->
+  <div class="panel active" id="p-android">
+
+    <div class="intro">
+      <h2>👋 First</h2>
+      <p>Connect your phone to the <strong>same Wi-Fi</strong> your team told you to use. Then follow the 4 steps below, one at a time.</p>
+    </div>
+
+    <div class="dots" id="dots-android"></div>
+
+    <!-- A1 -->
+    <div class="astep" id="android-1">
+      <div class="step">
+        <div class="step-top"><div class="bignum c1">1</div><div><div class="step-sub">Wi-Fi settings</div><div class="step-h">Enter the proxy</div></div></div>
+        <div class="step-b">
+          <p>Open your Wi-Fi settings and set a <strong>Manual proxy</strong>:</p>
+          <div class="taps">
+            <span class="tap">Settings</span><span class="arw">›</span>
+            <span class="tap">Wi-Fi</span><span class="arw">›</span>
+            <span class="tap">your network <em>(long-press)</em></span><span class="arw">›</span>
+            <span class="tap">Modify</span><span class="arw">›</span>
+            <span class="tap">Advanced</span><span class="arw">›</span>
+            <span class="tap hot">Proxy → Manual</span>
+          </div>
+          <p>Type in the address you were given:</p>
+          <div class="vals">
+            <div class="vrow"><span class="vkey">Proxy hostname</span><span class="vval">192.168.8.102</span></div>
+            <div class="vrow"><span class="vkey">Proxy port</span><span class="vval">8866</span></div>
+          </div>
+          <p>Tap <strong>Save</strong>. It should look like this:</p>
+          <div class="shot">
+            <div class="phone">
+              <div class="statusbar"><div class="notch"></div></div>
+              <svg viewBox="0 0 208 300" width="208" height="300" xmlns="http://www.w3.org/2000/svg">
+                <rect width="208" height="300" fill="#fff"/>
+                <rect width="208" height="40" fill="#3E6FD0"/>
+                <text x="16" y="25" fill="#fff" font-family="sans-serif" font-size="13" font-weight="700">Modify network</text>
+                <text x="16" y="66" fill="#9aa0b0" font-family="sans-serif" font-size="9">Proxy</text>
+                <rect x="14" y="72" width="180" height="26" rx="6" fill="#F3F0FF"/>
+                <text x="24" y="89" fill="#6D3EE8" font-family="sans-serif" font-size="11" font-weight="700">Manual  ▾</text>
+                <text x="16" y="120" fill="#9aa0b0" font-family="sans-serif" font-size="9">Proxy hostname</text>
+                <rect x="14" y="126" width="180" height="26" rx="6" fill="#fff" stroke="#E5E1F5" stroke-width="1.5"/>
+                <text x="24" y="143" fill="#2b2b3a" font-family="monospace" font-size="11" font-weight="700">192.168.8.102</text>
+                <text x="16" y="174" fill="#9aa0b0" font-family="sans-serif" font-size="9">Proxy port</text>
+                <rect x="14" y="180" width="180" height="26" rx="6" fill="#fff" stroke="#E5E1F5" stroke-width="1.5"/>
+                <text x="24" y="197" fill="#2b2b3a" font-family="monospace" font-size="11" font-weight="700">8866</text>
+                <rect x="118" y="248" width="76" height="34" rx="8" fill="#34A853"/>
+                <text x="156" y="270" fill="#fff" font-family="sans-serif" font-size="13" font-weight="800" text-anchor="middle">SAVE</text>
+              </svg>
+            </div>
+          </div>
+          <div class="shotcap">📱 Example — Android Wi-Fi proxy screen</div>
+          <div class="tip tip-warn"><span class="i">👆</span><span><strong>Long-press</strong> the network name (hold ~2 sec) — a quick tap won't show "Modify".</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A2 -->
+    <div class="astep" id="android-2" style="display:none">
+      <div class="step">
+        <div class="step-top"><div class="bignum c2">2</div><div><div class="step-sub">The easy way</div><div class="step-h">Download the certificate</div></div></div>
+        <div class="step-b">
+          <p>Open your phone's <strong>browser</strong> and type the same address. A download page appears — no cables or files needed!</p>
+          <div class="browser">
+            <div class="browser-bar"><span class="lock">🔒</span><div class="browser-url">http://192.168.8.102:8866</div></div>
+            <div class="browser-body">
+              <div class="dl">⬇️ Download FiddlerRootCertificate</div>
+              <div class="cap">Tap the link on the page to download</div>
+            </div>
+          </div>
+          <div class="tip tip-easy"><span class="i">✅</span><span>Just visit the URL and the certificate downloads to your phone.</span></div>
+          <div class="optbox">
+            <div class="opthead" onclick="toggleOpt(this)"><span>📎 Optional: use a copied file instead</span><span>＋</span></div>
+            <div class="optbody">If your team sent you the <strong>FiddlerRootCertificate.cer</strong> file (email, USB, Bluetooth), just open that file instead. You only need one method.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A3 -->
+    <div class="astep" id="android-3" style="display:none">
+      <div class="step">
+        <div class="step-top"><div class="bignum c3">3</div><div><div class="step-sub">Install</div><div class="step-h">Add the certificate</div></div></div>
+        <div class="step-b">
+          <p>Open the downloaded file. If asked what type, choose <strong>CA certificate</strong>:</p>
+          <div class="taps">
+            <span class="tap">Settings</span><span class="arw">›</span>
+            <span class="tap">Security</span><span class="arw">›</span>
+            <span class="tap">Encryption &amp; Credentials</span><span class="arw">›</span>
+            <span class="tap">Install a certificate</span><span class="arw">›</span>
+            <span class="tap hot">CA Certificate</span>
+          </div>
+          <p>Give it any name and confirm.</p>
+          <div class="shot">
+            <div class="phone">
+              <div class="statusbar"><div class="notch"></div></div>
+              <svg viewBox="0 0 208 300" width="208" height="300" xmlns="http://www.w3.org/2000/svg">
+                <rect width="208" height="300" fill="#EFEFF3"/>
+                <rect x="20" y="70" width="168" height="160" rx="14" fill="#fff"/>
+                <circle cx="104" cy="104" r="20" fill="#E7FBF9"/>
+                <text x="104" y="111" font-size="20" text-anchor="middle">🛡️</text>
+                <text x="104" y="150" fill="#2b2b3a" font-family="sans-serif" font-size="12" font-weight="800" text-anchor="middle">Name the certificate</text>
+                <rect x="40" y="164" width="128" height="24" rx="6" fill="#fff" stroke="#3E6FD0" stroke-width="1.5"/>
+                <text x="50" y="180" fill="#2b2b3a" font-family="sans-serif" font-size="10" font-weight="700">Fiddler</text>
+                <text x="40" y="204" fill="#9aa0b0" font-family="sans-serif" font-size="8">Used for: VPN and apps</text>
+                <rect x="96" y="212" width="72" height="26" rx="8" fill="#3E6FD0" transform="translate(0,-4)"/>
+                <text x="132" y="222" fill="#fff" font-family="sans-serif" font-size="11" font-weight="800" text-anchor="middle">OK</text>
+              </svg>
+            </div>
+          </div>
+          <div class="shotcap">📱 Example — "Name the certificate" dialog</div>
+          <div class="tip tip-warn"><span class="i">🔐</span><span>If you don't have a screen lock, Android asks you to set a <strong>PIN or password</strong> first. Set it, then install.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A4 -->
+    <div class="astep" id="android-4" style="display:none">
+      <div class="step">
+        <div class="step-top"><div class="bignum c4">4</div><div><div class="step-sub">Finish</div><div class="step-h">You're done!</div></div></div>
+        <div class="step-b">
+          <p>That's it. Just use your phone normally — open the app, log in, browse.</p>
+          <div class="tip tip-easy"><span class="i">🎉</span><span>Your device is now set up. Your team will see the traffic on their side.</span></div>
+          <div class="tip tip-note"><span class="i">↩️</span><span><strong>To undo later:</strong> go back to Wi-Fi → Modify → set Proxy to <strong>None</strong>.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="done" id="android-done">
+      <div class="big">🎉</div>
+      <h2>Android is ready!</h2>
+      <p>Setup complete. If you have an iPhone or iPad too, tap the <strong>iPhone / iPad</strong> tab.</p>
+      <button onclick="go('android',1)">↩ Start over</button>
+    </div>
+
+    <div class="nav" id="nav-android">
+      <button class="nbtn nprev" onclick="prev('android')">← Back</button>
+      <button class="nbtn nnext" onclick="next('android')">Next →</button>
+    </div>
+  </div>
+
+  <!-- ═══════════ iOS ═══════════ -->
+  <div class="panel" id="p-ios">
+
+    <div class="intro">
+      <h2>👋 First</h2>
+      <p>Connect to the <strong>same Wi-Fi</strong> your team told you to use. iOS has one extra "trust" step — please don't skip it!</p>
+    </div>
+
+    <div class="dots" id="dots-ios"></div>
+
+    <!-- i1 -->
+    <div class="istep" id="ios-1">
+      <div class="step">
+        <div class="step-top"><div class="bignum c1">1</div><div><div class="step-sub">Wi-Fi settings</div><div class="step-h">Enter the proxy</div></div></div>
+        <div class="step-b">
+          <p>Set a <strong>Manual proxy</strong> on your Wi-Fi network:</p>
+          <div class="taps">
+            <span class="tap">Settings</span><span class="arw">›</span>
+            <span class="tap">Wi-Fi</span><span class="arw">›</span>
+            <span class="tap">network ⓘ</span><span class="arw">›</span>
+            <span class="tap">Configure Proxy</span><span class="arw">›</span>
+            <span class="tap hot">Manual</span>
+          </div>
+          <div class="vals">
+            <div class="vrow"><span class="vkey">Server</span><span class="vval">192.168.8.102</span></div>
+            <div class="vrow"><span class="vkey">Port</span><span class="vval">8866</span></div>
+          </div>
+          <p>Tap <strong>Save</strong>.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- i2 -->
+    <div class="istep" id="ios-2" style="display:none">
+      <div class="step">
+        <div class="step-top"><div class="bignum c2">2</div><div><div class="step-sub">The easy way</div><div class="step-h">Download &amp; install cert</div></div></div>
+        <div class="step-b">
+          <p>Open <strong>Safari</strong> and go to the same address:</p>
+          <div class="browser">
+            <div class="browser-bar"><span class="lock">🔒</span><div class="browser-url">http://192.168.8.102:8866</div></div>
+            <div class="browser-body">
+              <div class="dl">⬇️ Download FiddlerRootCertificate</div>
+              <div class="cap">Safari says "Profile Downloaded"</div>
+            </div>
+          </div>
+          <p>Then install the profile:</p>
+          <div class="taps">
+            <span class="tap">Settings</span><span class="arw">›</span>
+            <span class="tap">General</span><span class="arw">›</span>
+            <span class="tap">VPN &amp; Device Management</span><span class="arw">›</span>
+            <span class="tap hot">Install</span>
+          </div>
+          <p>Enter your passcode to confirm.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- i3 -->
+    <div class="istep" id="ios-3" style="display:none">
+      <div class="step">
+        <div class="step-top"><div class="bignum c3">3</div><div><div class="step-sub">Don't skip this!</div><div class="step-h">Turn on trust</div></div></div>
+        <div class="step-b">
+          <p>iOS hides a switch you must turn on:</p>
+          <div class="taps">
+            <span class="tap">Settings</span><span class="arw">›</span>
+            <span class="tap">General</span><span class="arw">›</span>
+            <span class="tap">About</span><span class="arw">›</span>
+            <span class="tap hot">Certificate Trust Settings</span>
+          </div>
+          <p>Switch <strong>ON</strong> the Fiddler Root Certificate.</p>
+          <div class="shot">
+            <div class="phone">
+              <div class="statusbar"><div class="notch"></div></div>
+              <svg viewBox="0 0 208 300" width="208" height="300" xmlns="http://www.w3.org/2000/svg">
+                <rect width="208" height="300" fill="#EFEFF3"/>
+                <text x="16" y="30" fill="#2b2b3a" font-family="sans-serif" font-size="13" font-weight="800">Certificate Trust Settings</text>
+                <text x="16" y="60" fill="#9aa0b0" font-family="sans-serif" font-size="9">ENABLE FULL TRUST FOR ROOT CERTIFICATES</text>
+                <rect x="14" y="72" width="180" height="48" rx="10" fill="#fff"/>
+                <text x="24" y="101" fill="#2b2b3a" font-family="sans-serif" font-size="11" font-weight="700">Fiddler Root Certificate</text>
+                <rect x="150" y="87" width="34" height="20" rx="10" fill="#34C759"/>
+                <circle cx="174" cy="97" r="8" fill="#fff"/>
+                <text x="104" y="150" fill="#9aa0b0" font-family="sans-serif" font-size="9" text-anchor="middle">← turn this switch ON (green)</text>
+              </svg>
+            </div>
+          </div>
+          <div class="shotcap">📱 Example — iOS Certificate Trust screen</div>
+          <div class="tip tip-warn"><span class="i">⚠️</span><span>This is the #1 thing people miss. Without it, websites show errors.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- i4 -->
+    <div class="istep" id="ios-4" style="display:none">
+      <div class="step">
+        <div class="step-top"><div class="bignum c4">4</div><div><div class="step-sub">Finish</div><div class="step-h">You're done!</div></div></div>
+        <div class="step-b">
+          <p>All set — just use your iPhone normally.</p>
+          <div class="tip tip-easy"><span class="i">🎉</span><span>Your device is configured. Your team sees the traffic on their side.</span></div>
+          <div class="tip tip-note"><span class="i">↩️</span><span><strong>To undo later:</strong> Wi-Fi → network ⓘ → Configure Proxy → <strong>Off</strong>.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="done" id="ios-done">
+      <div class="big">🎉</div>
+      <h2>iPhone is ready!</h2>
+      <p>Setup complete. Questions? Check the <strong>Help</strong> tab.</p>
+      <button onclick="go('ios',1)">↩ Start over</button>
+    </div>
+
+    <div class="nav" id="nav-ios">
+      <button class="nbtn nprev" onclick="prev('ios')">← Back</button>
+      <button class="nbtn nnext" onclick="next('ios')">Next →</button>
+    </div>
+  </div>
+
+  <!-- ═══════════ HELP ═══════════ -->
+  <div class="panel" id="p-arch">
+    <div class="intro">
+      <h2>❓ What am I doing?</h2>
+      <p>You're telling your phone to send its internet traffic through your team's computer, so they can see how the app talks to the server. The certificate lets your phone trust that connection.</p>
+    </div>
+
+    <div class="arch">
+      <div class="anode teal">📱 Your phone</div>
+      <div class="aline"></div>
+      <div class="alabel">sends traffic to the proxy</div>
+      <div class="anode orange">192.168.8.102 : 8866</div>
+      <div class="aline"></div>
+      <div class="alabel">your team's computer</div>
+      <div class="anode teal">🌐 The internet</div>
+    </div>
+
+    <div class="intro" style="margin-top:20px">
+      <h2>🛟 Common problems</h2>
+      <p style="margin-bottom:0">Quick fixes below.</p>
+    </div>
+
+    <div class="step">
+      <div class="step-b" style="padding-top:16px">
+        <div class="tip tip-warn"><span class="i">🌐</span><span><strong>Websites won't load:</strong> double-check the proxy IP and port match exactly what you were given, and that Wi-Fi is the right network.</span></div>
+        <div class="tip tip-note"><span class="i">🔒</span><span><strong>HTTPS pages show errors (iOS):</strong> you missed the trust toggle. Settings → General → About → Certificate Trust Settings → turn it ON.</span></div>
+        <div class="tip tip-note"><span class="i">📌</span><span><strong>One app shows nothing but the browser works:</strong> that app blocks proxies ("certificate pinning"). Nothing you can change — let your team know.</span></div>
+        <div class="tip tip-easy"><span class="i">↩️</span><span><strong>Want to go back to normal:</strong> set the Wi-Fi proxy back to <strong>None / Off</strong>. Everything returns to how it was.</span></div>
+      </div>
+    </div>
+
+    <div class="intro" style="margin-top:8px">
+      <h2>💬 Frequently asked questions</h2>
+      <p style="margin-bottom:0">Tap a question to see the answer.</p>
+    </div>
+
+    <div class="faq">
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span class="qmark">?</span><span style="flex:1">Is this safe? Can my team see my passwords?</span><span class="chev">▾</span></div>
+        <div class="faq-a">While the proxy is on, your team can see the network traffic from this device — that's the whole point of testing. Only use it on a work/test device, and turn the proxy back to <strong>None / Off</strong> when you're finished. Don't do personal banking while it's active.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span class="qmark">?</span><span style="flex:1">Do I need to install any app?</span><span class="chev">▾</span></div>
+        <div class="faq-a">No. You only change Wi-Fi settings and install one small certificate from the browser. Nothing to download from an app store.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span class="qmark">?</span><span style="flex:1">The download page won't open in my browser</span><span class="chev">▾</span></div>
+        <div class="faq-a">Make sure you finished Step 1 first (the proxy must be set), you're on the correct Wi-Fi, and you typed the address exactly, e.g. <strong>http://192.168.8.102:8866</strong> — with <strong>http</strong>, not https.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span class="qmark">?</span><span style="flex:1">Android says "install from storage" is blocked</span><span class="chev">▾</span></div>
+        <div class="faq-a">Set a screen-lock PIN or password first (Settings → Security → Screen lock). Android requires a lock before it will trust a CA certificate. Then install again.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span class="qmark">?</span><span style="flex:1">HTTPS sites show a security error (iPhone)</span><span class="chev">▾</span></div>
+        <div class="faq-a">You missed the trust toggle. Go to <strong>Settings → General → About → Certificate Trust Settings</strong> and switch the Fiddler certificate ON. This is separate from installing it.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span class="qmark">?</span><span style="flex:1">The browser works but one app shows nothing</span><span class="chev">▾</span></div>
+        <div class="faq-a">That app uses "certificate pinning" — it refuses any proxy for security. This can't be fixed from the device; let your team know so they can use a special test build of the app.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span class="qmark">?</span><span style="flex:1">How do I completely undo everything?</span><span class="chev">▾</span></div>
+        <div class="faq-a"><strong>1)</strong> Set the Wi-Fi proxy back to None/Off. <strong>2)</strong> Delete the Fiddler certificate — Android: Settings → Security → Encryption &amp; Credentials → User credentials; iOS: Settings → General → VPN &amp; Device Management → remove the profile.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span class="qmark">?</span><span style="flex:1">Nothing loads at all after setup</span><span class="chev">▾</span></div>
+        <div class="faq-a">The computer running the proxy is probably off or asleep, or you're on a different Wi-Fi. Make sure that computer is on and you're on the same network. If you just need internet now, set the proxy to None/Off.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const S = { android:{cur:1,total:4}, ios:{cur:1,total:4} };
+
+function showTab(t){
+  ['android','ios','arch'].forEach(x=>{
+    document.getElementById('p-'+x).classList.remove('active');
+    document.getElementById('t-'+x).classList.remove('active');
+  });
+  document.getElementById('p-'+t).classList.add('active');
+  document.getElementById('t-'+t).classList.add('active');
+}
+
+function dots(mode){
+  const s=S[mode]; let h='';
+  for(let i=1;i<=s.total;i++) h+=`<div class="dot ${i===s.cur?'on':''}"></div>`;
+  document.getElementById('dots-'+mode).innerHTML=h;
+}
+
+function go(mode,step){
+  const s=S[mode];
+  for(let i=1;i<=s.total;i++) document.getElementById(mode+'-'+i).style.display='none';
+  document.getElementById(mode+'-done').classList.remove('on');
+  document.getElementById('nav-'+mode).style.display='';
+  if(step>s.total){
+    document.getElementById(mode+'-done').classList.add('on');
+    document.getElementById('nav-'+mode).style.display='none';
+    s.cur=s.total;
+  } else {
+    document.getElementById(mode+'-'+step).style.display='block';
+    s.cur=step;
+  }
+  dots(mode);
+  const nav=document.getElementById('nav-'+mode);
+  nav.querySelector('.nprev').disabled = s.cur<=1;
+  nav.querySelector('.nnext').textContent = s.cur>=s.total ? 'Finish ✓' : 'Next →';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function next(m){ go(m, S[m].cur+1); }
+function prev(m){ if(S[m].cur>1) go(m, S[m].cur-1); }
+
+function toggleOpt(el){
+  const b=el.nextElementSibling;
+  b.classList.toggle('open');
+  el.querySelector('span:last-child').textContent = b.classList.contains('open')?'－':'＋';
+}
+
+function toggleFaq(el){ el.parentElement.classList.toggle('open'); }
+
+dots('android'); dots('ios');
+go('android',1); go('ios',1);
+showTab('android');
+</script>
+</body>
+</html>
